@@ -2,9 +2,9 @@ using SwedbankPay.Sdk.PaymentOrder;
 
 namespace SwedbankPay.Sdk.Infrastructure.PaymentOrder;
 
-public class TokenOperations : OperationsBase, ITokenOperations
+public class UserTokenOperations : OperationsBase, IUserTokenOperations
 {
-    public TokenOperations(IOperationList map, HttpClient httpClient)
+    public UserTokenOperations(IOperationList map, HttpClient httpClient)
     {
         throw new NotImplementedException();
     }

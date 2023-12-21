@@ -54,15 +54,15 @@ public class PaymentOrdersResource : ResourceBase, IPaymentOrdersResource
         return paymentOrderResponseContainer != null ? new PaymentOrderResponse(paymentOrderResponseContainer, HttpClient) : null;
     }
     
-    public async Task<ITokenResponse?> GetOwnedTokens(string payerReference)
+    public async Task<IUserTokenResponse?> GetOwnedTokens(string payerReference)
     {
         var url = new Uri($"/psp/paymentorders/payerownedtokens/{payerReference}", UriKind.Relative);//.GetUrlWithQueryString(paymentOrderExpand);
 
         // var request = new PaymentOrderRequestDto(paymentOrderRequest);
 
-        var tokenResponseDto = await HttpClient.GetAsJsonAsync<TokenListResponseDto>(url);
+        var tokenResponseDto = await HttpClient.GetAsJsonAsync<UserTokenListResponseDto>(url);
 
-        return tokenResponseDto != null ? new TokenListResponse(tokenResponseDto, HttpClient) : null;
+        return tokenResponseDto != null ? new UserTokenListResponse(tokenResponseDto, HttpClient) : null;
     }
 
     

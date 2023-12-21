@@ -1,6 +1,6 @@
 namespace SwedbankPay.Sdk.PaymentOrder;
 
-public interface ITokenOperations
+public interface IUserTokenOperations
 {
     
 }

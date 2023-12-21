@@ -870,7 +870,7 @@ public class PaymentOrderTests : ResourceTestsBase
 }
 ";
 
-        var dto = JsonSerializer.Deserialize<TokenListResponseDto>(response, JsonSerialization.Settings);
+        var dto = JsonSerializer.Deserialize<UserTokenListResponseDto>(response, JsonSerialization.Settings);
         Assert.NotNull(dto);
     }
 }
