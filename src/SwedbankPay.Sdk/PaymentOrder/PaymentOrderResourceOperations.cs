@@ -36,6 +36,11 @@ public static class PaymentOrderResourceOperations
     /// Operation to view the payment order in a iframe.
     /// </summary>
     public const string ViewCheckout = "view-checkout";
+
+    /// <summary>
+    /// Creates a recur for the payment order.
+    /// </summary>
+    public const string Recur = "recur";
     
     /// <summary>
     /// 

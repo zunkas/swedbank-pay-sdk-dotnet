@@ -52,7 +52,7 @@ public class CheckOutController : Controller
         _logger.LogInformation($"Callback received for id {callbackInfo?.PaymentOrder?.Id}", callbackInfo);
     }
 
-    public async Task<IPaymentOrderResponse> CreateOrUpdatePaymentOrder(string consumerProfileRef = null, Uri paymentUrl = null)
+    public async Task<IPaymentOrderResponse> CreateOrUpdatePaymentOrder(bool isRecurring, Uri paymentUrl = null)
     {
         Uri orderId = null;
         var paymentOrderLink = _cartService.PaymentOrderLink;
@@ -61,10 +61,10 @@ public class CheckOutController : Controller
             orderId = new Uri(paymentOrderLink, UriKind.Relative);
         }
 
-        return orderId == null ? await CreatePaymentOrder(consumerProfileRef, paymentUrl) : await UpdatePaymentOrder(orderId, consumerProfileRef);
+        return orderId == null ? await CreatePaymentOrder(isRecurring, paymentUrl) : await UpdatePaymentOrder(orderId, isRecurring);
     }
 
-    private async Task<IPaymentOrderResponse> UpdatePaymentOrder(Uri orderId, string consumerProfileRef, Uri paymentUrl = null)
+    private async Task<IPaymentOrderResponse> UpdatePaymentOrder(Uri orderId, bool isRecurring, Uri paymentUrl = null)
     {
         var paymentOrder = await _swedbankPayClient.PaymentOrders.Get(orderId, PaymentOrderExpand.All);
         if (paymentOrder?.Operations.Update == null)
@@ -72,7 +72,7 @@ public class CheckOutController : Controller
             if (paymentOrder?.Operations.Abort != null)
             {
                 await paymentOrder.Operations.Abort(new PaymentOrderAbortRequest("UpdateNotAvailable"));
-                return await CreatePaymentOrder(consumerProfileRef, paymentUrl);
+                return await CreatePaymentOrder(isRecurring, paymentUrl);
             }
 
             return paymentOrder;
@@ -101,7 +101,7 @@ public class CheckOutController : Controller
                 if (!paymentOrderStatus.Equals(Status.Initialized))
                 {
                     await paymentOrder.Operations.Abort(new PaymentOrderAbortRequest("UpdatedOrderItems"));
-                    return await CreatePaymentOrder(consumerProfileRef, paymentUrl);
+                    return await CreatePaymentOrder(isRecurring, paymentUrl);
                 }
                 else
                 {
@@ -115,7 +115,7 @@ public class CheckOutController : Controller
         return paymentOrder;
     }
 
-    public async Task<IPaymentOrderResponse> CreatePaymentOrder(string consumerProfileRef = null, Uri paymentUrl = null)
+    public async Task<IPaymentOrderResponse> CreatePaymentOrder(bool isRecurring, Uri paymentUrl = null)
     {
         var totalAmount = _cartService.CalculateTotal();
 
@@ -142,7 +142,7 @@ public class CheckOutController : Controller
 
             paymentOrderRequest.GeneratePaymentToken = true;
             paymentOrderRequest.Metadata = null;
-
+            paymentOrderRequest.GenerateRecurrenceToken = isRecurring;
             paymentOrderRequest.Payer = new Payer
             {
                 FirstName = "Olivia",
@@ -206,7 +206,6 @@ public class CheckOutController : Controller
 
             _cartService.PaymentOrderLink = paymentOrder?.PaymentOrder.Id.OriginalString;
             _cartService.PaymentLink = null;
-            _cartService.ConsumerProfileRef = consumerProfileRef;
             _cartService.Update();
 
             return paymentOrder;
@@ -218,27 +217,9 @@ public class CheckOutController : Controller
         }
     }
 
-    [HttpPost]
-    public async Task<JsonResult> GetViewPaymentOrderHref(string consumerProfileRef = null)
+    public async Task<IActionResult> LoadPaymentMenu(bool isRedirect = false, bool isRecurring = false)
     {
-        string paymentOrderLink = _cartService.PaymentOrderLink;
-        if (!string.IsNullOrWhiteSpace(paymentOrderLink))
-        {
-            var uri = new Uri(paymentOrderLink, UriKind.Relative);
-            var paymentOrderResponse = await _swedbankPayClient.PaymentOrders.Get(uri, PaymentOrderExpand.None);
-            return Json(paymentOrderResponse.Operations.View.Href.OriginalString);
-        }
-
-        var paymentOrderResponseObject = await CreateOrUpdatePaymentOrder(consumerProfileRef, _urls.StandardCheckoutPaymentUrl);
-        return Json(paymentOrderResponseObject.Operations.View.Href.OriginalString);
-    }
-
-
-    public async Task<IActionResult> LoadPaymentMenu(bool isRedirect = false)
-    {
-        var consumerProfileRef = _cartService.ConsumerProfileRef;
-        var paymentOrder = await CreateOrUpdatePaymentOrder(consumerProfileRef, _urls.AnonymousCheckoutPaymentUrl);
-
+        var paymentOrder = await CreateOrUpdatePaymentOrder(isRecurring, _urls.AnonymousCheckoutPaymentUrl);
         if (isRedirect)
         {
             return Redirect(paymentOrder?.Operations.Redirect?.Href.ToString()!);
@@ -249,8 +230,7 @@ public class CheckOutController : Controller
             JavascriptSource = paymentOrder?.Operations.View?.Href,
             Culture = CultureInfo.GetCultureInfo("sv-SE"),
             UseAnonymousCheckout = true,
-            AbortOperationLink = paymentOrder?.Operations[LinkRelation.UpdateAbort]?.Href,
-            PaymentOrderLink = paymentOrder?.PaymentOrder.Id
+            AbortOperationLink = paymentOrder?.Operations[LinkRelation.UpdateAbort]?.Href
         };
 
         return View("Checkout", swedbankPaySource);
