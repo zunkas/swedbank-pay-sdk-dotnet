@@ -8,5 +8,5 @@ public interface IUserToken
    string? InstrumentDisplayName { get; init; }
    string? CorrelationId { get; init; }
    IInstrumentParameters? InstrumentParameters { get; init; }
-   IOperationList? Operations { get; init; }
+   IUserTokenOperations? Operations { get; set; }
 }

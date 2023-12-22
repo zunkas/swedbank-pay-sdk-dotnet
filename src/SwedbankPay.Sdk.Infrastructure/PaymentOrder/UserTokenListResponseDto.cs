@@ -1,12 +1,7 @@
 namespace SwedbankPay.Sdk.Infrastructure.PaymentOrder;
-
 internal record UserTokenListResponseDto
 {
-    public UserTokenResponseDto PayerOwnedTokens { get; init; } = null!;
-    public OperationListDto Operations { get; init; } = null!;
-
-    public UserTokenListResponse Map(HttpClient httpClient)
-    {
-        return new UserTokenListResponse(this, httpClient);
-    }
+    public string? Id { get; init; }
+    public string? PayerReference { get; init; }
+    public List<UserTokenResponseItemDto>? Tokens { get; init; }
 }

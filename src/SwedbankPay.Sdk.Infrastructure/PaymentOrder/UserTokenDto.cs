@@ -10,5 +10,5 @@ internal record UserTokenDto : IUserToken
     public string? InstrumentDisplayName { get; init; }
     public string? CorrelationId { get; init; }
     public IInstrumentParameters? InstrumentParameters { get; init; }
-    public IOperationList? Operations { get; init; }
+    public IUserTokenOperations? Operations { get; set; }
 }

@@ -11,18 +11,23 @@ internal record UserTokenResponseItemDto
     public string? CorrelationId { get; init; }
     public InstrumentParametersDto? InstrumentParameters { get; init; }
     public OperationListDto? Operations { get; init; }
-    
-    public IUserToken Map()
+
+    public IUserToken Map(HttpClient httpClient)
     {
-        return new UserTokenDto()
+        var dto = new UserTokenDto
         {
             Token = Token,
             TokenType = TokenType,
             Instrument = Instrument,
             InstrumentDisplayName = InstrumentDisplayName,
             CorrelationId = CorrelationId,
-            InstrumentParameters = InstrumentParameters,
-            Operations = Operations?.Map()
+            InstrumentParameters = InstrumentParameters
         };
+        
+        if (Operations != null) {
+            dto.Operations = new UserTokenOperations(Operations?.Map()!, httpClient);
+        }
+
+        return dto;
     }
 }

@@ -7,6 +7,7 @@ using SwedbankPay.Sdk.Infrastructure.PaymentOrder;
 using SwedbankPay.Sdk.PaymentOrder;
 using SwedbankPay.Sdk.PaymentOrder.OperationRequest.Abort;
 using SwedbankPay.Sdk.PaymentOrder.OperationRequest.Capture;
+using SwedbankPay.Sdk.PaymentOrder.OperationRequest.RemoveToken;
 using SwedbankPay.Sdk.PaymentOrder.OperationRequest.Update;
 using SwedbankPay.Sdk.PaymentOrder.OrderItems;
 using SwedbankPay.Sdk.Tests.TestBuilders;
@@ -819,19 +820,16 @@ public class PaymentOrderTests : ResourceTestsBase
     [Fact]
     public async Task GetTokens()
     {
-        //ARRANGE
-
-        // var paymentOrderRequest = _paymentOrderRequestBuilder.WithTestValues(PayeeId).WithOrderItems().Build();
-
-        //ACT
         var tokenResponse = await Sut.PaymentOrders.GetOwnedTokens("AB1234");
+
         Assert.NotNull(tokenResponse);
-        // Assert.NotNull(paymentOrder.Operations);
-        // Assert.NotNull(paymentOrder.Operations.View);
+
+        var resp = await tokenResponse.Operations?.DeleteAllTokens!(new RemoveTokenRequest(TokenState.Deleted, "test"))!;
+        Assert.NotNull(resp);
     }
 
     [Fact]
-    public async Task DeserializeGetTokensResponse()
+    public void DeserializeGetTokensResponse()
     {
         var response = @"{
   ""payerOwnedTokens"": {
@@ -872,5 +870,47 @@ public class PaymentOrderTests : ResourceTestsBase
 
         var dto = JsonSerializer.Deserialize<UserTokenListResponseDto>(response, JsonSerialization.Settings);
         Assert.NotNull(dto);
+    }
+
+
+    [Fact]
+    public void DeserializeRemoveTokenResp()
+    {
+        var response = @"{
+  ""payerOwnedTokens"": {
+    ""id"": ""/psp/paymentorders/payerownedtokens/AB1234"",
+    ""payerReference"": ""AB1234"",
+    ""tokens"": [
+      {
+        ""tokenType"": ""Payment"",
+        ""token"": ""d52ae770-2cb8-4f41-9aad-c6f5259f5b53"",
+        ""correlationId"": ""3e4ed820-12c6-41b0-90f3-1d9d0e2d21ec"",
+        ""instrument"": ""CreditCard"",
+        ""instrumentDisplayName"": ""476173******0416"",
+        ""instrumentParameters"": {
+          ""expiryDate"": ""12/2024"",
+          ""cardBrand"": ""Visa""
+        }
+      },
+      {
+        ""tokenType"": ""Recurrence"",
+        ""token"": ""5327ef8f-8121-4155-a831-7c30e3a6d959"",
+        ""correlationId"": ""c15a032f-2c31-4c8a-b6eb-f33097829b46"",
+        ""instrument"": ""CreditCard"",
+        ""instrumentDisplayName"": ""551000******2347"",
+        ""instrumentParameters"": {
+          ""expiryDate"": ""11/2033"",
+          ""cardBrand"": ""MasterCard""
+        }
+      }
+    ]
+  }
+}";
+
+        var dtoResp = JsonSerializer.Deserialize<UserTokenResponseDto>(response, JsonSerialization.Settings);
+        Assert.NotNull(dtoResp);
+
+        var resp = new UserTokenResponse(dtoResp, new HttpClient());
+        Assert.NotNull(resp);
     }
 }

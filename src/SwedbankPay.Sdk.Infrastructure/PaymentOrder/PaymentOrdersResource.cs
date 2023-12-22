@@ -58,12 +58,8 @@ public class PaymentOrdersResource : ResourceBase, IPaymentOrdersResource
     {
         var url = new Uri($"/psp/paymentorders/payerownedtokens/{payerReference}", UriKind.Relative);//.GetUrlWithQueryString(paymentOrderExpand);
 
-        // var request = new PaymentOrderRequestDto(paymentOrderRequest);
+        var tokenResponseDto = await HttpClient.GetAsJsonAsync<UserTokenResponseDto>(url);
 
-        var tokenResponseDto = await HttpClient.GetAsJsonAsync<UserTokenListResponseDto>(url);
-
-        return tokenResponseDto != null ? new UserTokenListResponse(tokenResponseDto, HttpClient) : null;
+        return tokenResponseDto != null ? new UserTokenResponse(tokenResponseDto, HttpClient) : null;
     }
-
-    
 }
