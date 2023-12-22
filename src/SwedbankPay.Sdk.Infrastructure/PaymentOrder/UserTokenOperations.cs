@@ -27,7 +27,7 @@ internal class UserTokenOperations : OperationsBase, IUserTokenOperations
                     {
                         var url = httpOperation.Href;
                         var requestDto = new RemoveTokenRequestDto(payload);
-                        var paymentOrderResponseContainer = await httpClient.SendAsJsonAsync<UserTokenResponseDto>(httpOperation.Method, url, requestDto);
+                        var paymentOrderResponseContainer = await httpClient.SendAsJsonAsync<UserTokenResponseItemDto>(httpOperation.Method, url, requestDto);
                         return paymentOrderResponseContainer != null ? new UserTokenResponse(paymentOrderResponseContainer, httpClient) : null;
                     };
                     break;
@@ -36,7 +36,7 @@ internal class UserTokenOperations : OperationsBase, IUserTokenOperations
                     {
                         var url = httpOperation.Href;
                         var requestDto = new RemoveTokenRequestDto(payload);
-                        var paymentOrderResponseContainer = await httpClient.SendAsJsonAsync<UserTokenResponseDto>(httpOperation.Method, url, requestDto);
+                        var paymentOrderResponseContainer = await httpClient.SendAsJsonAsync<UserTokenResponseItemDto>(httpOperation.Method, url, requestDto);
                         return paymentOrderResponseContainer != null ? new UserTokenResponse(paymentOrderResponseContainer, httpClient) : null;
                     };
                     break;
