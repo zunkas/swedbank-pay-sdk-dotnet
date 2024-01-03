@@ -41,19 +41,24 @@ public static class PaymentOrderResourceOperations
     /// Creates a recur for the payment order.
     /// </summary>
     public const string Recur = "recur";
+
+    /// <summary>
+    /// Creates a unscheduled for the payment order.
+    /// </summary>
+    public const string Unscheduled = "unscheduled";
     
     /// <summary>
-    /// 
+    /// Deletes all payer owned tokens for the payment order.
     /// </summary>
     public const string DeleteAllTokens = "delete-payerownedtokens";
     
     /// <summary>
-    /// 
+    /// Deletes all recurring tokens for the payment order.
     /// </summary>
     public const string DeleteRecurringTokens = "delete-recurrencetokens";
     
     /// <summary>
-    /// 
+    /// Deletes payment tokens for the payment order
     /// </summary>
     public const string DeleteTokens = "delete-paymenttokens";
 }

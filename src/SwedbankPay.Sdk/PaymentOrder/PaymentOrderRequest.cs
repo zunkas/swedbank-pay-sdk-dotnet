@@ -17,6 +17,7 @@ public record PaymentOrderRequest(
     public Metadata.Metadata? Metadata { get; set; }
     public Operation Operation { get; } = Operation;
     public string? RecurrenceToken { get; set; }
+    public string? UnscheduledToken { get; set; }
     public Currency Currency { get; } = Currency;
     public Amount Amount { get; } = Amount;
     public Amount VatAmount { get; } = VatAmount;
@@ -25,6 +26,7 @@ public record PaymentOrderRequest(
     public bool GeneratePaymentToken { get; set; }
     public Language Language { get; } = Language;
     public bool GenerateRecurrenceToken { get; set; }
+    public bool GenerateUnscheduledToken { get; set; }
     public bool DisableStoredPaymentDetails { get; set; }
     public string? Instrument { get; set; }
     public string? Implementation { get; set; }

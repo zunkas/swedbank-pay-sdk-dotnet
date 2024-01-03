@@ -109,6 +109,9 @@ else if (TempData["ErrorMessage"] != null)
                                 case PaymentOrderResourceOperations.Recur:
                                     actionName = "Recurring";
                                     break;
+                                case PaymentOrderResourceOperations.Unscheduled:
+                                    actionName = "Unscheduled";
+                                    break;
                             }
                             @if (!string.IsNullOrEmpty(actionName))
                             {

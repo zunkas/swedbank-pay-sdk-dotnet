@@ -171,6 +171,45 @@ public class PaymentController : Controller
             return RedirectToAction("Details", "Orders");
         }
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> Unscheduled(string paymentOrderId, string recurringToken)
+    {
+        try
+        {
+            var description = "Recurring the authorized payment";
+            var recurringRequest = await GetUnscheduledRequest(description, recurringToken);
+
+            var response = await _swedbankPayClient.PaymentOrders.Create(recurringRequest, PaymentOrderExpand.All);
+
+            _context.Orders.Add(new Order
+            {
+                PaymentOrderLink = response?.PaymentOrder.Id,
+                Lines = response.PaymentOrder.OrderItems?.OrderItemList?.Select(x => new CartLine
+                {
+                    Quantity = (int)x.Quantity,
+                    Product = new Product
+                    {
+                        Reference = x.Reference,
+                        Class = x.Class,
+                        Name = x.Name,
+                        Price = x.Amount,
+                        Type = x.Type.Value,
+                        VatPercentage = x.VatPercent
+                    }
+                }).ToList()
+            });
+            _context.SaveChanges(true);
+
+            return RedirectToAction("Details", "Orders");
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = $"Something unexpected happened. {e.Message}";
+            return RedirectToAction("Details", "Orders");
+        }
+    }
+    
 
 
     [HttpPost]
@@ -240,6 +279,27 @@ public class PaymentController : Controller
         return request;
     }
 
+    private async Task<PaymentOrderRequest> GetUnscheduledRequest(string description, string recurrenceToken)
+    {
+        var order = await _context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+        var orderItems = order.Lines.ToOrderItems();
+
+        var request = new PaymentOrderRequest(Operation.UnscheduledPurchase, new Currency("SEK"), new Amount(order.Lines.Sum(e => e.Quantity * e.Product.Price)),
+            new Amount(0), description, "userAgent", new Language("sv-SE"), new Urls(_urls.HostUrls.ToList(), _urls.CompleteUrl, _urls.CancelUrl, _urls.CallbackUrl),
+            new PayeeInfo(_payeeInfoOptions.PayeeId, _payeeInfoOptions.PayeeReference))
+        {
+            UnscheduledToken = recurrenceToken,
+            OrderItems = orderItems.ToList(),
+            Payer = new Payer
+            {
+                PayerReference = "AB1234",
+            }
+        };
+
+        return request;
+    }
+    
+    
     private async Task<PaymentOrderCaptureRequest> GetCaptureRequest(string paymentOrderId, string description, string receiptReference)
     {
         var order = await _context.Orders.Where(x => x.PaymentOrderLink.ToString().Equals(paymentOrderId, StringComparison.InvariantCultureIgnoreCase))
