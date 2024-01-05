@@ -7,7 +7,7 @@
 
 @if (TempData["ResponseMessage"] != null)
 {
-	<div class="alert alert-success">@TempData["ResponseMessage"]</div>
+    <div class="alert alert-success">@TempData["ResponseMessage"]</div>
 }
 
 <h1>Tokens</h1>
@@ -75,11 +75,18 @@
                                     Delete Recurring Token
                                 </a>
                             }
+                            else if (token.Operations?.DeleteUnscheduledTokens != null)
+                            {
+                                <a class="btn btn-primary" asp-controller="Tokens"
+                                   asp-action="DeleteUnscheduledToken"
+                                   asp-route-tokenId=@token.Token>
+                                    Delete Unscheduled Token
+                                </a>
+                            }
                             else
                             {
-                            <span class="badge badge-warning">Not implemented</span>
+                                <span class="badge badge-warning">Not implemented</span>
                             }
-
                         </td>
                     </tr>
                 }

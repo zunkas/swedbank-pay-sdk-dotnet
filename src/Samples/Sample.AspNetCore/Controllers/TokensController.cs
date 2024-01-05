@@ -81,6 +81,22 @@ public class TokensController : Controller
         return View("Index", viewModel);
     }
 
+    public async Task<IActionResult> DeleteUnscheduledToken(string tokenId)
+    {
+        var viewModel = await GetViewModel();
+
+        var token = viewModel.Tokens.FirstOrDefault(x => x.Token == tokenId);
+        if (token?.Operations?.DeleteUnscheduledTokens != null)
+        {
+            var resp = await token.Operations?.DeleteUnscheduledTokens(
+                new RemoveTokenRequest(TokenState.Deleted, "Deleted"))!;
+
+            TempData["ResponseMessage"] = $"DELETED: {JsonSerializer.Serialize(resp)}";
+        }
+
+        return View("Index", viewModel);
+    }
+    
     private async Task<TokenViewModel> GetViewModel()
     {
         var viewModel = new TokenViewModel();
