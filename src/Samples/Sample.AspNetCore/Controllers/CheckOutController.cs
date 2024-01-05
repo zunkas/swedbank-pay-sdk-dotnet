@@ -231,7 +231,8 @@ public class CheckOutController : Controller
             JavascriptSource = paymentOrder?.Operations.View?.Href,
             Culture = CultureInfo.GetCultureInfo("sv-SE"),
             UseAnonymousCheckout = true,
-            AbortOperationLink = paymentOrder?.Operations[LinkRelation.UpdateAbort]?.Href
+            AbortOperationLink = paymentOrder?.Operations[LinkRelation.UpdateAbort]?.Href,
+            PaymentOrderLink = paymentOrder?.PaymentOrder.Id
         };
 
         return View("Checkout", swedbankPaySource);
