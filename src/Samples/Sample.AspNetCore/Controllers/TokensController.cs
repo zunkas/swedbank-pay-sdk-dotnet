@@ -109,7 +109,7 @@ public class TokensController : Controller
             viewModel.Tokens = tokenResponse?.Tokens;
             viewModel.OperationList = tokenResponse?.Operations;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             _logger.LogError("No existing tokens for user");
         }
