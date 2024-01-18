@@ -17,6 +17,7 @@ internal record UserTokenResponseItemDto
     {
         var dto = new UserTokenDto
         {
+            IsDeleted = IsDeleted,
             Token = Token,
             TokenType = TokenType,
             Instrument = Instrument,
