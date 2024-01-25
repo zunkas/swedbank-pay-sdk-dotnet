@@ -7,11 +7,6 @@ public class PaymentInstrument : TypeSafeEnum<PaymentInstrument>
         /// </summary>
         public static readonly PaymentInstrument CreditCard = new PaymentInstrument(nameof(CreditCard), "CreditCard");
 
-        // /// <summary>
-        // /// The order item will be limited to invoice.
-        // /// </summary>
-        // public static readonly PaymentInstrument Invoice = new PaymentInstrument(nameof(Invoice), "Invoice");
-
         /// <summary>
         /// The order item will be limited to Vipps.
         /// </summary>
@@ -84,7 +79,6 @@ public class PaymentInstrument : TypeSafeEnum<PaymentInstrument>
             return instrument switch
             {
                 "CreditCard" => CreditCard,
-                // "Invoice" => Invoice,
                 "Vipps" => Vipps,
                 "Swish" => Swish,
                 "Trustly" => Trustly,
