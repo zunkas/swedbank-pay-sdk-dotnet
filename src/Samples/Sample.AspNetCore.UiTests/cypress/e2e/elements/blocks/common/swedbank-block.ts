@@ -24,14 +24,26 @@ class SwedbankBlock {
         }
     }
     
+    deleteToken(tokenType: string){
+        cy.getByAutomation('tokenslink', true, {timeout: 30000}).click();
+        cy.get('table.table tr[data-automation="' + tokenType + '"] td a.btn', {timeout: 30000}).first().click()
+        cy.get('.alert.alert-success', {timeout: 5000}).should('have.class', 'alert-success');
+    }
+    
     payWithCard() {
         cy.iframeLoaded(
             'iframe[src^="https://ecom.externalintegration.payex.com/checkout"]',
             "#creditcard",
             30,
             ($iframe) => {
-                cy.findInIframe($iframe, "#creditcard").click();
-                cy.findInIframe($iframe, "#view-creditcard").within(() => {
+                cy.wait(2000);
+                cy.findInIframe($iframe, '#creditcard')
+                    .then(($btn) => {
+                        if (!$btn.hasClass('selected')) {
+                            $btn.trigger('click');
+                        }
+                    })
+                cy.findInIframe($iframe, '#view-creditcard').within(() => {
                     cy.iframeLoaded(
                         'iframe[src^="https://ecom.externalintegration.payex.com/creditcard"]',
                         "#panInput",
