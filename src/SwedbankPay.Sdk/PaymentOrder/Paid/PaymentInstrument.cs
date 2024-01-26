@@ -1,5 +1,8 @@
 namespace SwedbankPay.Sdk.PaymentOrder.Paid;
 
+/// <summary>
+/// Payment instrument of the Order.
+/// </summary>
 public class PaymentInstrument : TypeSafeEnum<PaymentInstrument>
 	{
         /// <summary>
@@ -27,7 +30,14 @@ public class PaymentInstrument : TypeSafeEnum<PaymentInstrument>
         /// </summary>
         public static readonly PaymentInstrument CreditAccount = new PaymentInstrument(nameof(CreditAccount), "CreditAccount");
         
+        /// <summary>
+        /// The order item will be limited to credit account No.
+        /// </summary>
         public static readonly PaymentInstrument CreditAccountCreditAccountNo = new PaymentInstrument(nameof(CreditAccountCreditAccountNo), "CreditAccount-CreditAccountNo");
+        
+        /// <summary>
+        /// The order item will be limited to credit account Se.
+        /// </summary>
         public static readonly PaymentInstrument CreditAccountCreditAccountSe = new PaymentInstrument(nameof(CreditAccountCreditAccountSe), "CreditAccount-CreditAccountSe");
 
         /// <summary>
@@ -44,16 +54,36 @@ public class PaymentInstrument : TypeSafeEnum<PaymentInstrument>
         /// The order item will be limited to invoice subtype PayMonthlyInvoiceSe.
         /// </summary>
         public static readonly PaymentInstrument InvoicePayMonthlyInvoiceSe = new PaymentInstrument(nameof(InvoicePayMonthlyInvoiceSe), "Invoice-PayMonthlyInvoiceSe");
-
         
+        /// <summary>
+        /// The order item will be limited to ApplePay.
+        /// </summary>
         public static readonly PaymentInstrument ApplePay = new PaymentInstrument(nameof(ApplePay), "ApplePay");
+        
+        /// <summary>
+        /// The order item will be limited to GooglePay.
+        /// </summary>
         public static readonly PaymentInstrument GooglePay = new PaymentInstrument(nameof(GooglePay), "GooglePay");
+        
+        /// <summary>
+        /// The order item will be limited to SamsungPay.
+        /// </summary>
         public static readonly PaymentInstrument SamsungPay = new PaymentInstrument(nameof(SamsungPay), "SamsungPay");
+        
+        /// <summary>
+        /// The order item will be limited to MobilePay.
+        /// </summary>
         public static readonly PaymentInstrument MobilePay = new PaymentInstrument(nameof(MobilePay), "MobilePay");
+        
+        /// <summary>
+        /// The order item will be limited to ClickToPay.
+        /// </summary>
         public static readonly PaymentInstrument ClickToPay = new PaymentInstrument(nameof(ClickToPay), "ClickToPay");
+        
+        /// <summary>
+        /// The order item will be limited to CarPay.
+        /// </summary>
         public static readonly PaymentInstrument CarPay = new PaymentInstrument(nameof(CarPay), "CarPay");
-
-
         
         /// <summary>
         /// Instantiates a <see cref="OrderItemInstrument"/> with the provided parameters.
